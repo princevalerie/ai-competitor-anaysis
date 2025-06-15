@@ -63,5 +63,3 @@ MIT License (adjust if you use a different license).
 For questions, open an issue or contact [princevalerie](https://github.com/princevalerie).
 
 ---
-
-Let me know if you want this as a file in your repo or need any customization!
