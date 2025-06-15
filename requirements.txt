@@ -1,0 +1,12 @@
+streamlit>=1.32.0
+exa-py>=1.0.0
+agno>=0.1.0
+google-generativeai>=0.3.2
+pandas>=2.2.0
+requests>=2.31.0
+firecrawl>=0.1.0
+pydantic>=2.6.1
+python-dotenv>=1.0.1
+pathlib>=1.0.0
+duckduckgo-search
+scrapegraph-py>=1.12.0
