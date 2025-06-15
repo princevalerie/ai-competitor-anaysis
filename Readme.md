@@ -1,4 +1,3 @@
-Here is an English README template based on your app.py file for the ai-competitor-anaysis repository:
 
 ---
 
