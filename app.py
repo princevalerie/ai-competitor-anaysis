@@ -468,7 +468,7 @@ with st.container(border=True):
             "Jumlah Kompetitor",
             min_value=1,
             max_value=5,
-            value=3,
+            value=1,
         )
 
     st.markdown("**URL Website Kompetitor**")
