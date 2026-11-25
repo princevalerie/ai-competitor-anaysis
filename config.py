@@ -6,8 +6,11 @@ Streamlit UI never asks for or persists credentials.
 
 from __future__ import annotations
 
+import logging
 import os
 from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
 
@@ -105,31 +108,42 @@ class AppSettings:
         return bool(self.scrapegraph_keys)
 
 
+def _get_config_value(*names: str) -> str:
+    """Read the first non-empty config value from environment variables or Streamlit secrets."""
+    for name in names:
+        env_val = os.getenv(name, "").strip()
+        if env_val:
+            return env_val
+    try:
+        import streamlit as st
+
+        secrets = getattr(st, "secrets", None)
+        if secrets is not None:
+            for name in names:
+                if name in secrets:
+                    val = secrets[name]
+                    if val is not None and str(val).strip():
+                        return str(val).strip()
+    except Exception:  # noqa: BLE001 - st.secrets raises StreamlitSecretNotFoundError when unconfigured
+        pass
+    return ""
+
+
 def load_settings(env_path: Path | None = None, *, reload_env: bool = True) -> AppSettings:
-    """Load settings from `.env` and OS environment variables."""
+    """Load settings from `.env`, OS environment variables, and Streamlit `st.secrets`."""
     target_env = env_path or DEFAULT_ENV_PATH
     if reload_env and target_env.exists():
         load_dotenv(dotenv_path=target_env, override=True)
 
-    raw_gemini = os.getenv("GEMINI_API_KEY", "").strip()
-    raw_openrouter = os.getenv("OPENROUTER_API_KEY", "").strip()
-    raw_sgai_1 = (
-        os.getenv("SGAI_API_KEY")
-        or os.getenv("SGAI_API_KEY_1")
-        or os.getenv("SCRAPEGRAPH_API_KEY")
-        or ""
-    ).strip()
-    raw_sgai_2 = (os.getenv("SGAI_API_KEY_2") or os.getenv("SCRAPEGRAPH_API_KEY_2") or "").strip()
-    raw_sgai_3 = (os.getenv("SGAI_API_KEY_3") or os.getenv("SCRAPEGRAPH_API_KEY_3") or "").strip()
+    raw_gemini = _get_config_value("GEMINI_API_KEY")
+    raw_openrouter = _get_config_value("OPENROUTER_API_KEY")
+    raw_sgai_1 = _get_config_value("SGAI_API_KEY", "SGAI_API_KEY_1", "SCRAPEGRAPH_API_KEY")
+    raw_sgai_2 = _get_config_value("SGAI_API_KEY_2", "SCRAPEGRAPH_API_KEY_2")
+    raw_sgai_3 = _get_config_value("SGAI_API_KEY_3", "SCRAPEGRAPH_API_KEY_3")
 
-    gemini_model = os.getenv("GEMINI_MODEL", DEFAULT_GEMINI_MODEL).strip() or DEFAULT_GEMINI_MODEL
-    gemini_fallback = (
-        os.getenv("GEMINI_FALLBACK_MODEL", DEFAULT_GEMINI_FALLBACK_MODEL).strip()
-        or DEFAULT_GEMINI_FALLBACK_MODEL
-    )
-    openrouter_model = (
-        os.getenv("OPENROUTER_MODEL", DEFAULT_OPENROUTER_MODEL).strip() or DEFAULT_OPENROUTER_MODEL
-    )
+    gemini_model = _get_config_value("GEMINI_MODEL") or DEFAULT_GEMINI_MODEL
+    gemini_fallback = _get_config_value("GEMINI_FALLBACK_MODEL") or DEFAULT_GEMINI_FALLBACK_MODEL
+    openrouter_model = _get_config_value("OPENROUTER_MODEL") or DEFAULT_OPENROUTER_MODEL
 
     return AppSettings(
         gemini_api_key=raw_gemini if _is_configured_secret(raw_gemini) else "",
@@ -141,7 +155,7 @@ def load_settings(env_path: Path | None = None, *, reload_env: bool = True) -> A
         gemini_fallback_model=gemini_fallback,
         openrouter_model=openrouter_model,
         max_context_chars=_parse_positive_int(
-            os.getenv("MAX_CONTEXT_CHARS"), DEFAULT_MAX_CONTEXT_CHARS, minimum=5_000, maximum=400_000
+            _get_config_value("MAX_CONTEXT_CHARS"), DEFAULT_MAX_CONTEXT_CHARS, minimum=5_000, maximum=400_000
         ),
     )
 
