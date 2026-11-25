@@ -27,11 +27,11 @@ st.set_page_config(
     page_title="AI Competitor Intelligence",
     page_icon="🧲",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 # ---------------------------------------------------------------------------
-# Custom CSS — pipeline banner, profile cards, animated crawl indicators
+# Custom CSS — profile cards & animated crawl indicators
 # ---------------------------------------------------------------------------
 st.markdown(
     """
@@ -39,14 +39,6 @@ st.markdown(
     .block-container {
         padding-top: 2rem;
         padding-bottom: 2.5rem;
-    }
-    .pipeline-banner {
-        padding: 0.85rem 1.1rem;
-        border-radius: 0.75rem;
-        border: 1px solid rgba(128, 128, 128, 0.25);
-        background: rgba(128, 128, 128, 0.06);
-        margin-bottom: 1.25rem;
-        font-size: 0.92rem;
     }
     .profile-card {
         padding: 1rem 1.15rem;
@@ -447,16 +439,6 @@ with st.sidebar:
 # Main Workspace
 # ---------------------------------------------------------------------------
 st.title("🧲 AI Competitor Intelligence Agent")
-st.markdown(
-    """
-    <div class="pipeline-banner">
-        <strong>Pipeline Crawl Otomatis (No Max Page Cap):</strong>
-        🥇 <strong>ScrapeGraphAI Akun #1</strong> → 🥈 <strong>Akun #2</strong> → 🥉 <strong>Akun #3</strong>
-        &nbsp;|&nbsp; <strong>AI Analyzer:</strong> Gemini Free Tier → OpenRouter (<code>openrouter/free</code>)
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
 if not settings.has_scrapegraph_key:
     st.error(
