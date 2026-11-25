@@ -1,12 +1,9 @@
+# Requires Python >= 3.12 (needed by scrapegraph-py>=2.3.1)
 streamlit>=1.32.0
-exa-py>=1.0.0
-agno>=0.1.0
-google-generativeai>=0.3.2
+scrapegraph-py>=2.3.1
+google-genai>=3.0.0
 pandas>=2.2.0
 requests>=2.31.0
-firecrawl>=0.1.0
 pydantic>=2.6.1
 python-dotenv>=1.0.1
-pathlib>=1.0.0
-duckduckgo-search
-scrapegraph-py>=1.12.0
+pytest>=8.0.0
