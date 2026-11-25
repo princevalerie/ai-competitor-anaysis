@@ -124,8 +124,8 @@ def _get_config_value(*names: str) -> str:
                     val = secrets[name]
                     if val is not None and str(val).strip():
                         return str(val).strip()
-    except Exception:  # noqa: BLE001 - st.secrets raises StreamlitSecretNotFoundError when unconfigured
-        pass
+    except Exception as exc:  # noqa: BLE001 - st.secrets raises StreamlitSecretNotFoundError when unconfigured
+        logger.debug("Streamlit secrets unavailable: %s", exc)
     return ""
 
 
